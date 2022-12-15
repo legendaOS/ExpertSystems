@@ -59,15 +59,21 @@ function find(rules, nodes, start, end){
     let modules = [...rules]
     let SOW = [...start]
 
+    let confirmedRules = []
+
     while(true){
         if(SOW.find(item => item == end)){
-            return true
+            // если в подтвержденных вершинах найдена конечная
+            return {statusRes: true, rules: confirmedRules}
         }
         
-
+        // пометить ве выходящие дуги
         let newMarked = markOutRules(SOW, modules)
 
+        // найти концы этих дуг
         let newNodes = findOutNodes(newMarked)
+
+        //подтвердить вершины из этого массива
 
         let newConfirmedNodes = []
 
@@ -79,16 +85,30 @@ function find(rules, nodes, start, end){
             }
         }
 
+        // подтвержденные вершины довавить в массив вершин
+
         let newSOW = [...SOW]
         for(let i of newConfirmedNodes){
             if (! newSOW.includes(i)) newSOW.push(i)
         }
 
+        // если ничего не изменилось то завершиться
         if(SOW.length == newSOW.length){
             return false
         }
 
         SOW = newSOW
+
+        // добавить вершины типа "правило" в массив пройденных правил
+
+        for(let elementa of SOW){
+            let bufnoda = nodes.find(item => item.name == elementa)
+            if(bufnoda.type == 'rule'){
+                if(! confirmedRules.includes(elementa)){
+                    confirmedRules.push(elementa)
+                }
+            }
+        }
 
         let chekpoint = 1
 
